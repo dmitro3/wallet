@@ -1,5 +1,7 @@
 package com.gemwallet.android.model
 
+import java.math.BigInteger
+
 data class Balance<T>(
     val available: T,
     val frozen: T,
@@ -24,6 +26,21 @@ data class Balance<T>(
                 && other.withdrawable == withdrawable
                 && other.pendingUnconfirmed == pendingUnconfirmed
                 && other.earn == earn
+    }
+
+    companion object {
+        fun zero(): Balance<BigInteger> = Balance(
+            available = BigInteger.ZERO,
+            frozen = BigInteger.ZERO,
+            locked = BigInteger.ZERO,
+            staked = BigInteger.ZERO,
+            pending = BigInteger.ZERO,
+            rewards = BigInteger.ZERO,
+            reserved = BigInteger.ZERO,
+            withdrawable = BigInteger.ZERO,
+            pendingUnconfirmed = BigInteger.ZERO,
+            earn = BigInteger.ZERO,
+        )
     }
 
     override fun hashCode(): Int {

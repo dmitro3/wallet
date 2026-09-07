@@ -20,6 +20,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.math.BigInteger
 
 class AssetInfoDataAggregateTest {
 
@@ -73,7 +74,7 @@ class AssetInfoDataAggregateTest {
     fun assetInfoDataAggregate_balance_hideBalanceTrue_returnsStars() {
         val assetInfo = createAssetInfo(
             asset = btcAsset,
-            balance = AssetBalance.create(btcAsset, available = "100000000")
+            balance = AssetBalance.create(btcAsset, available = BigInteger("100000000"))
         )
         val aggregate = assetInfo.toAssetInfoDataAggregate(hideBalance = true)
 
@@ -84,7 +85,7 @@ class AssetInfoDataAggregateTest {
     fun assetInfoDataAggregate_balance_hideBalanceFalse_returnsFormattedBalance() {
         val assetInfo = createAssetInfo(
             asset = btcAsset,
-            balance = AssetBalance.create(btcAsset, available = "100000000")
+            balance = AssetBalance.create(btcAsset, available = BigInteger("100000000"))
         )
         val aggregate = assetInfo.toAssetInfoDataAggregate(hideBalance = false)
         assertEquals("1 BTC", aggregate.balance)
@@ -94,7 +95,7 @@ class AssetInfoDataAggregateTest {
     fun assetInfoDataAggregate_balance_zeroBalance_returnsFormattedZero() {
         val assetInfo = createAssetInfo(
             asset = btcAsset,
-            balance = AssetBalance.create(btcAsset, available = "0")
+            balance = AssetBalance.create(btcAsset, available = BigInteger("0"))
         )
         val aggregate = assetInfo.toAssetInfoDataAggregate(hideBalance = false)
 
@@ -105,7 +106,7 @@ class AssetInfoDataAggregateTest {
     fun assetInfoDataAggregate_balanceEquivalent_hideBalanceTrue_returnsStars() {
         val assetInfo = createAssetInfo(
             asset = btcAsset,
-            balance = AssetBalance.create(btcAsset, available = "100000000"),
+            balance = AssetBalance.create(btcAsset, available = BigInteger("100000000")),
             price = createAssetPriceInfo(price = 50000.0)
         )
         val aggregate = assetInfo.toAssetInfoDataAggregate(hideBalance = true)
@@ -117,7 +118,7 @@ class AssetInfoDataAggregateTest {
     fun assetInfoDataAggregate_balanceEquivalent_withPrice_returnsFormattedFiat() {
         val assetInfo = createAssetInfo(
             asset = btcAsset,
-            balance = AssetBalance.create(btcAsset, available = "100000000"),
+            balance = AssetBalance.create(btcAsset, available = BigInteger("100000000")),
             price = createAssetPriceInfo(price = 50000.0)
         )
         val aggregate = assetInfo.toAssetInfoDataAggregate(hideBalance = false)
@@ -128,7 +129,7 @@ class AssetInfoDataAggregateTest {
     fun assetInfoDataAggregate_balanceEquivalent_noPrice_returnsEmpty() {
         val assetInfo = createAssetInfo(
             asset = btcAsset,
-            balance = AssetBalance.create(btcAsset, available = "100000000"),
+            balance = AssetBalance.create(btcAsset, available = BigInteger("100000000")),
             price = null
         )
         val aggregate = assetInfo.toAssetInfoDataAggregate(hideBalance = false)
@@ -140,7 +141,7 @@ class AssetInfoDataAggregateTest {
     fun assetInfoDataAggregate_balanceEquivalent_zeroPriceValue_returnsEmpty() {
         val assetInfo = createAssetInfo(
             asset = btcAsset,
-            balance = AssetBalance.create(btcAsset, available = "100000000"),
+            balance = AssetBalance.create(btcAsset, available = BigInteger("100000000")),
             price = createAssetPriceInfo(price = 0.0)
         )
         val aggregate = assetInfo.toAssetInfoDataAggregate(hideBalance = false)
@@ -152,7 +153,7 @@ class AssetInfoDataAggregateTest {
     fun assetInfoDataAggregate_balanceEquivalent_nonFinitePrice_returnsEmpty() {
         val assetInfo = createAssetInfo(
             asset = btcAsset,
-            balance = AssetBalance.create(btcAsset, available = "100000000"),
+            balance = AssetBalance.create(btcAsset, available = BigInteger("100000000")),
             price = createAssetPriceInfo(price = Double.NaN)
         )
         val aggregate = assetInfo.toAssetInfoDataAggregate(hideBalance = false)
@@ -165,7 +166,7 @@ class AssetInfoDataAggregateTest {
     fun assetInfoDataAggregate_isZeroBalance_zeroBalance_returnsTrue() {
         val assetInfo = createAssetInfo(
             asset = btcAsset,
-            balance = AssetBalance.create(btcAsset, available = "0")
+            balance = AssetBalance.create(btcAsset, available = BigInteger("0"))
         )
         val aggregate = assetInfo.toAssetInfoDataAggregate(hideBalance = false)
 
@@ -348,7 +349,7 @@ class AssetInfoDataAggregateTest {
     fun assetInfoDataAggregate_balanceEquivalent_withEuroCurrency_returnsEuroFormat() {
         val assetInfo = createAssetInfo(
             asset = ethAsset,
-            balance = AssetBalance.create(ethAsset, available = "1000000000000000000"),
+            balance = AssetBalance.create(ethAsset, available = BigInteger("1000000000000000000")),
             price = createAssetPriceInfo(price = 3000.0, currency = Currency.EUR)
         )
         val aggregate = assetInfo.toAssetInfoDataAggregate(hideBalance = false)
@@ -362,9 +363,9 @@ class AssetInfoDataAggregateTest {
             asset = btcAsset,
             balance = AssetBalance.create(
                 btcAsset,
-                available = "50000000",
-                staked = "30000000",
-                pending = "20000000"
+                available = BigInteger("50000000"),
+                staked = BigInteger("30000000"),
+                pending = BigInteger("20000000")
             )
         )
         val aggregate = assetInfo.toAssetInfoDataAggregate(hideBalance = false)
@@ -403,12 +404,12 @@ class AssetInfoDataAggregateTest {
         val items = listOf(
             createAssetInfo(
                 asset = btcAsset,
-                balance = AssetBalance.create(btcAsset, available = "150000000"),
+                balance = AssetBalance.create(btcAsset, available = BigInteger("150000000")),
                 price = createAssetPriceInfo(price = 50000.0, priceChangePercentage24h = 1.0)
             ),
             createAssetInfo(
                 asset = ethAsset,
-                balance = AssetBalance.create(ethAsset, available = "2000000000000000000"),
+                balance = AssetBalance.create(ethAsset, available = BigInteger("2000000000000000000")),
                 price = createAssetPriceInfo(price = 3000.0, priceChangePercentage24h = -1.0, currency = Currency.EUR)
             ),
             createAssetInfo(asset = btcAsset, price = null),

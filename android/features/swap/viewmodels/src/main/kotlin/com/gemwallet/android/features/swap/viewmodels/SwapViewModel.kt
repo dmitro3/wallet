@@ -219,7 +219,7 @@ class SwapViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     val uiState = combine(session, payValueFlow, payAsset) { quoteSession, value, pay ->
-            val available = pay?.balance?.balance?.available?.let(::BigInteger) ?: BigInteger.ZERO
+            val available = pay?.balance?.balance?.available ?: BigInteger.ZERO
             val atomic = pay?.let { Crypto(value, it.asset.decimals).atomicValue } ?: BigInteger.ZERO
             createSwapUiState(quoteSession, quoteSession.buttonAction(atomic, available))
         }
@@ -291,7 +291,7 @@ class SwapViewModel @Inject constructor(
 
     fun onSelectPercent(percent: Int) {
         val asset = payAsset.value ?: return
-        val value = asset.balance.balance.available.toBigInteger().multiplyByPercent(percent)
+        val value = asset.balance.balance.available.multiplyByPercent(percent)
         payValue.clearText()
         payValue.setTextAndPlaceCursorAtEnd(
             Crypto(value).value(asset.asset.decimals).stripTrailingZeros().toPlainString()

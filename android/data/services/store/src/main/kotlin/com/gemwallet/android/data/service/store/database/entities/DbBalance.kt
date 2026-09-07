@@ -9,6 +9,7 @@ import com.gemwallet.android.ext.toAssetId
 import com.gemwallet.android.model.AssetBalance
 import com.gemwallet.android.model.Balance
 import com.wallet.core.primitives.BalanceMetadata
+import java.math.BigInteger
 
 @Entity(
     tableName = "balances",
@@ -82,16 +83,16 @@ fun DbBalance.toDTO(): AssetBalance? {
     return AssetBalance(
         asset = assetId.toAssetId()?.chain?.asset() ?: return null,
         balance = Balance(
-            available = available,
-            frozen = frozen,
-            locked = locked,
-            staked = staked,
-            pending = pending,
-            rewards = rewards,
-            reserved = reserved,
-            withdrawable = withdrawable,
-            pendingUnconfirmed = pendingUnconfirmed,
-            earn = earn,
+            available = available.toBigInteger(),
+            frozen = frozen.toBigInteger(),
+            locked = locked.toBigInteger(),
+            staked = staked.toBigInteger(),
+            pending = pending.toBigInteger(),
+            rewards = rewards.toBigInteger(),
+            reserved = reserved.toBigInteger(),
+            withdrawable = withdrawable.toBigInteger(),
+            pendingUnconfirmed = pendingUnconfirmed.toBigInteger(),
+            earn = earn.toBigInteger(),
         ),
         balanceAmount = Balance(
             available = availableAmount,

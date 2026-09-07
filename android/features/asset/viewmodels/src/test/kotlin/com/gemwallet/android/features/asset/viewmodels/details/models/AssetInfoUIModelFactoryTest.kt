@@ -22,6 +22,7 @@ import org.junit.Before
 import org.junit.Test
 import com.gemwallet.android.ext.toIdentifier
 import uniffi.gemstone.GemSwapPairSuggestion
+import java.math.BigInteger
 
 class AssetInfoUIModelFactoryTest {
 
@@ -51,9 +52,9 @@ class AssetInfoUIModelFactoryTest {
         val position = model(
             mockAsset(chain = Chain.Cosmos, symbol = "ATOM", decimals = 6),
             metadata = mockAssetMetaData(isStakeEnabled = true, stakingApr = 5.0),
-            available = "1000000",
-            staked = "2000000",
-            reserved = "500000",
+            available = BigInteger("1000000"),
+            staked = BigInteger("2000000"),
+            reserved = BigInteger("500000"),
         ).accountInfoUIModel.balances
         assertEquals(
             listOf(AssetInfoUIModel.BalanceViewType.Available, AssetInfoUIModel.BalanceViewType.Stake, AssetInfoUIModel.BalanceViewType.Reserved),
@@ -65,18 +66,18 @@ class AssetInfoUIModelFactoryTest {
         assertEquals(listOf(AssetInfoUIModel.BalanceViewType.Stake), apr.map { it.type })
         assertTrue(apr.single().value.startsWith("APR"))
 
-        assertTrue(model(mockAsset(chain = Chain.Bitcoin), available = "100000000").accountInfoUIModel.balances.isEmpty())
+        assertTrue(model(mockAsset(chain = Chain.Bitcoin), available = BigInteger("100000000")).accountInfoUIModel.balances.isEmpty())
     }
 
     private fun model(
         asset: Asset,
-        available: String = "0",
-        frozen: String = "0",
-        locked: String = "0",
-        staked: String = "0",
-        pending: String = "0",
-        rewards: String = "0",
-        reserved: String = "0",
+        available: BigInteger = BigInteger("0"),
+        frozen: BigInteger = BigInteger("0"),
+        locked: BigInteger = BigInteger("0"),
+        staked: BigInteger = BigInteger("0"),
+        pending: BigInteger = BigInteger("0"),
+        rewards: BigInteger = BigInteger("0"),
+        reserved: BigInteger = BigInteger("0"),
         metadata: AssetMetaData = mockAssetMetaData(),
     ): AssetInfoUIModel {
         val balance = AssetBalance.create(

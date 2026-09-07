@@ -271,7 +271,7 @@ class RequestSwapQuotesImplTest {
         return mockAssetInfo(
             asset = asset,
             owner = Account(chain = Chain.SmartChain, address = "address", derivationPath = "m/44'/60'/0'/0/0"),
-            balance = AssetBalance.create(asset, available = "100000000000000000000"),
+            balance = AssetBalance.create(asset, available = BigInteger("100000000000000000000")),
         )
     }
 

@@ -93,7 +93,7 @@ class SwapViewModelTest {
     private val usdcAsset = mockAssetSolanaUSDC()
     private val solInfo = mockAssetInfo(
         asset = solAsset,
-        balance = AssetBalance.create(solAsset, available = "1000000000"),
+        balance = AssetBalance.create(solAsset, available = BigInteger("1000000000")),
     )
     private val usdcInfo = mockAssetInfo(asset = usdcAsset)
 

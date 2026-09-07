@@ -70,7 +70,7 @@ class RequestSwapQuotesImpl(
             fromAsset = params.pay.asset.toGem(),
             toAsset = params.receive.asset.toGem(),
             value = amount,
-            useMaxAmount = BigInteger(params.pay.balance.balance.available) == amount,
+            useMaxAmount = params.pay.balance.balance.available == amount,
             slippageBps = params.slippageBps,
         )
         currentCoroutineContext().ensureActive()

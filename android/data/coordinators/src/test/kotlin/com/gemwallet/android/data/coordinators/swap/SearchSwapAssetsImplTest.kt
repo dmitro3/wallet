@@ -23,6 +23,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import uniffi.gemstone.GemSwapServiceInterface
 import uniffi.gemstone.SwapperAssetList
+import java.math.BigInteger
 
 class SearchSwapAssetsImplTest {
 
@@ -36,13 +37,13 @@ class SearchSwapAssetsImplTest {
     fun `pay search excludes assets without available balance`() = runTest {
         val fundedAsset = mockAssetInfo(
             asset = usdcAsset,
-            balance = AssetBalance.create(usdcAsset, available = "100000000"),
+            balance = AssetBalance.create(usdcAsset, available = BigInteger("100000000")),
             walletId = wallet.id,
             metadata = swapableMetaData,
         )
         val stakedOnlyAsset = mockAssetInfo(
             asset = hypeAsset,
-            balance = AssetBalance.create(hypeAsset, available = "0", staked = "500000000"),
+            balance = AssetBalance.create(hypeAsset, available = BigInteger("0"), staked = BigInteger("500000000")),
             walletId = wallet.id,
             metadata = swapableMetaData,
         )
@@ -80,7 +81,7 @@ class SearchSwapAssetsImplTest {
     fun `pay search without a receive asset uses the core swap filters instead of the swapper lists`() = runTest {
         val fundedAsset = mockAssetInfo(
             asset = usdcAsset,
-            balance = AssetBalance.create(usdcAsset, available = "100000000"),
+            balance = AssetBalance.create(usdcAsset, available = BigInteger("100000000")),
             walletId = wallet.id,
             metadata = swapableMetaData,
         )

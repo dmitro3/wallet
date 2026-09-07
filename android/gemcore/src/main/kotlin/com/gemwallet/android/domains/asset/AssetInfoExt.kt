@@ -41,11 +41,11 @@ val AssetInfo.availableBalance: String  // TODO: Out to BalanceExt
 
 val AssetInfo.availableBalanceFormatted: String // TODO: Out to BalanceExt
     get() = ValueFormatter(style = ValueFormatter.Style.Auto)
-        .string(balance.balance.available.toBigInteger(), balance.asset)
+        .string(balance.balance.available, balance.asset)
 
 val AssetInfo.availableBalanceAmount: String
     get() = ValueFormatter(style = ValueFormatter.Style.Auto)
-        .string(balance.balance.available.toBigInteger(), decimals = asset.decimals)
+        .string(balance.balance.available, decimals = asset.decimals)
 
 fun AssetInfo.calculateFiat(value: BigInteger): BigDecimal = toAssetPriceValue().calculateFiat(value)
 

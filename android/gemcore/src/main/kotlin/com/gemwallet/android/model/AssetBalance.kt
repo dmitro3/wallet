@@ -9,7 +9,7 @@ import java.math.BigInteger
 
 data class AssetBalance(
     val asset: Asset,
-    val balance: Balance<String> = Balance("0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+    val balance: Balance<BigInteger> = Balance.zero(),
     val balanceAmount: Balance<Double> = Balance(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
     val totalAmount: Double = 0.0,
     val fiatTotalAmount: Double = 0.0,
@@ -20,16 +20,16 @@ data class AssetBalance(
     companion object {
         fun create(
             asset: Asset,
-            available: String = "0",
-            frozen: String = "0",
-            locked: String = "0",
-            staked: String = "0",
-            pending: String = "0",
-            rewards: String = "0",
-            reserved: String = "0",
-            withdrawable: String = "0",
-            pendingUnconfirmed: String = "0",
-            earn: String = "0",
+            available: BigInteger = BigInteger.ZERO,
+            frozen: BigInteger = BigInteger.ZERO,
+            locked: BigInteger = BigInteger.ZERO,
+            staked: BigInteger = BigInteger.ZERO,
+            pending: BigInteger = BigInteger.ZERO,
+            rewards: BigInteger = BigInteger.ZERO,
+            reserved: BigInteger = BigInteger.ZERO,
+            withdrawable: BigInteger = BigInteger.ZERO,
+            pendingUnconfirmed: BigInteger = BigInteger.ZERO,
+            earn: BigInteger = BigInteger.ZERO,
             metadata: BalanceMetadata? = null,
             isActive: Boolean = true,
         ): AssetBalance {
@@ -60,7 +60,7 @@ data class AssetBalance(
 }
 
 
-private fun Balance<String>.createAmount(decimals: Int) = Balance(
+private fun Balance<BigInteger>.createAmount(decimals: Int) = Balance(
     available = Crypto(available).value(decimals).stripTrailingZeros().toDouble(),
     frozen = Crypto(frozen).value(decimals).stripTrailingZeros().toDouble(),
     locked = Crypto(locked).value(decimals).stripTrailingZeros().toDouble(),
@@ -73,33 +73,23 @@ private fun Balance<String>.createAmount(decimals: Int) = Balance(
     earn = Crypto(earn).value(decimals).stripTrailingZeros().toDouble(),
 )
 
-fun Balance<String>.hasAvailable() = try {
-    available.toBigInteger() > BigInteger.ZERO
-} catch (_: Throwable) {
-    false
-}
+fun Balance<BigInteger>.hasAvailable() = available > BigInteger.ZERO
 
 fun Balance<Double>.getTotalAmount() = available + frozen + locked + staked + pending + rewards + earn
 
-fun Balance<String>.getTotalAmount() = BigInteger(available) +
-        BigInteger(frozen) +
-        BigInteger(locked) +
-        BigInteger(staked) +
-        BigInteger(pending) +
-        BigInteger(rewards) +
-        BigInteger(earn)
+fun Balance<BigInteger>.getTotalAmount() = available + frozen + locked + staked + pending + rewards + earn
 
 fun AssetBalance.toGem() = GemAssetBalance(
     assetId = asset.id.toIdentifier(),
-    available = BigInteger(balance.available),
-    frozen = BigInteger(balance.frozen),
-    locked = BigInteger(balance.locked),
-    staked = BigInteger(balance.staked),
-    pending = BigInteger(balance.pending),
-    pendingUnconfirmed = BigInteger(balance.pendingUnconfirmed),
-    rewards = BigInteger(balance.rewards),
-    reserved = BigInteger(balance.reserved),
-    withdrawable = BigInteger(balance.withdrawable),
-    earn = BigInteger(balance.earn),
+    available = balance.available,
+    frozen = balance.frozen,
+    locked = balance.locked,
+    staked = balance.staked,
+    pending = balance.pending,
+    pendingUnconfirmed = balance.pendingUnconfirmed,
+    rewards = balance.rewards,
+    reserved = balance.reserved,
+    withdrawable = balance.withdrawable,
+    earn = balance.earn,
     metadata = metadata?.toGem(),
 )

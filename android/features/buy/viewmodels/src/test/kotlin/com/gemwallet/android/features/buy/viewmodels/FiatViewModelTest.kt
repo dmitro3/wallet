@@ -256,7 +256,7 @@ class FiatViewModelTest {
             runCurrent()
             assertFalse(viewModel.showFiatTypePicker.value)
 
-            assetDataFlow.value = assetData(price = 100.0, isSellEnabled = true, available = "0")
+            assetDataFlow.value = assetData(price = 100.0, isSellEnabled = true, available = BigInteger("0"))
             advanceTimeBy(DebounceSettleMs)
             runCurrent()
             assertTrue(viewModel.showFiatTypePicker.value)
@@ -368,7 +368,7 @@ class FiatViewModelTest {
     private fun assetData(
         price: Double,
         isSellEnabled: Boolean = false,
-        available: String = "0",
+        available: BigInteger = BigInteger("0"),
     ) = mockAssetData(
         asset = asset,
         wallet = wallet,
@@ -377,7 +377,7 @@ class FiatViewModelTest {
     ).copy(price = mockAssetPriceInfo(price = price))
 
     private companion object {
-        const val OneBitcoin = "100000000"
+        val OneBitcoin: BigInteger = BigInteger("100000000")
         const val DebounceSettleMs = 300L
     }
 }

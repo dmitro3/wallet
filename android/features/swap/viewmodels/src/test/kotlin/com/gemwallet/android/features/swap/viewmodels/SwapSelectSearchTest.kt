@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigInteger
 
 class SwapSelectSearchTest {
 
@@ -34,7 +35,7 @@ class SwapSelectSearchTest {
     fun `pay search forwards opposite receive id and selected type to coordinator`() = runTest {
         val fundedAsset = mockAssetInfo(
             asset = usdcAsset,
-            balance = AssetBalance.create(usdcAsset, available = "100000000"),
+            balance = AssetBalance.create(usdcAsset, available = BigInteger("100000000")),
             walletId = wallet.id,
             metadata = swapableMetaData,
         )

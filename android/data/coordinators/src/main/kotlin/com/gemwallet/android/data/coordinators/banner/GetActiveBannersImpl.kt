@@ -69,7 +69,7 @@ class GetActiveBannersImpl(
         assetId = assetInfo?.asset?.id?.toIdentifier(),
         isStakeable = assetInfo?.metadata?.isStakeEnabled == true,
         hasStakeBalance = hasStakeBalance(assetInfo),
-        hasAvailableBalance = (assetInfo?.balance?.balance?.available?.toBigIntegerOrNull() ?: BigInteger.ZERO) > BigInteger.ZERO,
+        hasAvailableBalance = (assetInfo?.balance?.balance?.available ?: BigInteger.ZERO) > BigInteger.ZERO,
         isAssetActivated = assetInfo?.balance?.isActive != false,
         assetRankScore = assetInfo?.metadata?.rankScore,
         isWalletEmpty = isWalletEmpty,

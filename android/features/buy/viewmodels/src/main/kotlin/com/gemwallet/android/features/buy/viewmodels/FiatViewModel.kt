@@ -132,7 +132,7 @@ class FiatViewModel @Inject constructor(
         assetData.filterNotNull()
             .onEach { data ->
                 session.update {
-                    it.onBalanceChanged(BigInteger(data.balance.balance.available))
+                    it.onBalanceChanged(data.balance.balance.available)
                         .onSellEnabledChanged(data.metadata.isSellEnabled)
                 }
             }

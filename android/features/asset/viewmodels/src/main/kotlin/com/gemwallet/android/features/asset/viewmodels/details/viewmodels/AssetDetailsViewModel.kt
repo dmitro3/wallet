@@ -96,7 +96,7 @@ class AssetDetailsViewModel @Inject constructor(
             val asset = assetInfo.asset
             assetInfoUIModelFactory.create(
                 chainAssetInfo = it.chainAssetInfo,
-                swapPair = assetDetailsService.swapPair(asset.id.toIdentifier(), assetInfo.balance.balance.available.toBigInteger() > BigInteger.ZERO),
+                swapPair = assetDetailsService.swapPair(asset.id.toIdentifier(), assetInfo.balance.balance.available > BigInteger.ZERO),
                 explorerName = it.explorerName,
                 explorerAddressUrl = it.chainAssetInfo.assetInfo.owner?.address?.let { address ->
                     assetDetailsService.addressUrl(asset.chain.string, address).link

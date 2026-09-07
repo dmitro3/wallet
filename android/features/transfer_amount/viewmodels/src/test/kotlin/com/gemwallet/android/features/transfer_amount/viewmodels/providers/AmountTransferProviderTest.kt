@@ -91,7 +91,7 @@ class AmountTransferProviderTest {
     fun `withdraw availableBalance uses withdrawable, not available`() = runBlocking {
         val info = mockAssetInfo(
             asset = asset,
-            balance = AssetBalance.create(asset = asset, available = "9000000", withdrawable = "5000000"),
+            balance = AssetBalance.create(asset = asset, available = BigInteger("9000000"), withdrawable = BigInteger("5000000")),
         )
         val getInfo = mockk<GetAssetInfo> {
             every { this@mockk.invoke(asset.id) } returns flowOf(info)

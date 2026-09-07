@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigInteger
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SendSelectSearchTest {
@@ -26,13 +27,13 @@ class SendSelectSearchTest {
     private val walletAssetResults = listOf(
         mockAssetInfo(
             asset = fundedAsset,
-            balance = AssetBalance.create(fundedAsset, available = "1000000000"),
+            balance = AssetBalance.create(fundedAsset, available = BigInteger("1000000000")),
         )
     )
     private val searchResults = listOf(
         mockAssetInfo(
             asset = searchAsset,
-            balance = AssetBalance.create(searchAsset, available = "1000000"),
+            balance = AssetBalance.create(searchAsset, available = BigInteger("1000000")),
         )
     )
 
