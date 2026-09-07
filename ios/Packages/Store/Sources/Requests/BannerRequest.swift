@@ -31,7 +31,9 @@ public struct BannersRequest: DatabaseQueryable {
             query = query.filter(BannerRecord.Columns.walletId == walletId.id || BannerRecord.Columns.walletId == nil)
         }
         if let assetId {
-            query = query.filter(BannerRecord.Columns.assetId == assetId.identifier)
+            query = query.filter(
+                [assetId.identifier, assetId.chain.assetId.identifier].contains(BannerRecord.Columns.assetId),
+            )
         }
 
         return try query

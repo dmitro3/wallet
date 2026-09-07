@@ -1,13 +1,13 @@
 // Copyright (c). Gem Wallet. All rights reserved.
 
-import struct Gemstone.GemBannerContent
-import protocol Gemstone.GemWalletHomeServiceProtocol
-import struct Gemstone.GemBannerContext
-import GemstoneServices
 import Components
 import Formatters
 import Foundation
+import struct Gemstone.GemBannerContent
+import struct Gemstone.GemBannerContext
+import protocol Gemstone.GemWalletHomeServiceProtocol
 import GemstonePrimitives
+import GemstoneServices
 import InfoSheet
 import Localization
 import NFT
@@ -163,13 +163,13 @@ public final class WalletSceneViewModel: Sendable, AssetActions {
     private var bannerContext: GemBannerContext {
         GemBannerContext(
             wallet: wallet.map(),
-            hasAsset: false,
+            assetId: nil,
             isStakeable: false,
             hasStakeBalance: false,
             hasAvailableBalance: false,
             isAssetActivated: true,
             assetRankScore: .none,
-            isWalletEmpty: assets.allSatisfy { $0.balance.total.isZero },
+            isWalletEmpty: assets.allSatisfy(\.balance.total.isZero),
         )
     }
 }
@@ -249,7 +249,6 @@ public extension WalletSceneViewModel {
     func onTransferComplete() {
         isPresentingSheet = nil
     }
-
 }
 
 // MARK: - Private

@@ -1,7 +1,5 @@
 package com.gemwallet.android.data.coordinators.banner
 
-import com.gemwallet.android.ext.toPrimitives
-import com.gemwallet.android.ext.toGem
 import com.gemwallet.android.application.assets.cases.GetActiveAssetsInfo
 import com.gemwallet.android.application.assets.cases.GetAssetInfo
 import com.gemwallet.android.application.banner.cases.GetActiveBanners
@@ -9,10 +7,11 @@ import com.gemwallet.android.application.session.cases.GetSession
 import com.gemwallet.android.data.services.gemstone.stores.GemstoneBannerStore
 import com.gemwallet.android.data.service.store.database.entities.toDTO
 import com.gemwallet.android.domains.asset.chain
+import com.gemwallet.android.ext.toGem
 import com.gemwallet.android.ext.toIdentifier
+import com.gemwallet.android.ext.toPrimitives
 import com.gemwallet.android.model.AssetInfo
 import com.gemwallet.android.model.toGem
-import com.gemwallet.android.serializer.decodeJson
 import com.wallet.core.primitives.Asset
 import com.wallet.core.primitives.Banner
 import com.wallet.core.primitives.BannerEvent
@@ -42,7 +41,7 @@ class GetActiveBannersImpl(
             val wallet = session?.wallet
             val sceneWallet = wallet.takeUnless { isGlobal }
             val stored = when {
-                asset != null -> bannerStore.observeAssetBanners(wallet?.id?.id, asset.id.toIdentifier())
+                asset != null -> bannerStore.observeAssetBanners(wallet?.id?.id, asset.id)
                 wallet != null -> bannerStore.observeWalletBanners(wallet.id.id, listOf(BannerEvent.AccountBlockedMultiSignature, BannerEvent.Onboarding))
                 else -> flowOf(emptyList())
             }
@@ -53,12 +52,12 @@ class GetActiveBannersImpl(
                 flowOf(false)
             }
             combine(stored, assetInfo, isWalletEmpty) { records, assetInfo, isWalletEmpty ->
-                val banners = records.map { it.toDTO(asset) }.distinctBy { it.event }
+                val banners = records.map { it.toDTO() }
                 bannerContext(wallet, assetInfo, isWalletEmpty).visibleBanners(
-                    stored = banners.map { GemBannerItem(event = it.event.toGem(), state = it.state.toGem()) },
+                    stored = banners.map { GemBannerItem(event = it.event.toGem(), state = it.state.toGem(), assetId = it.asset?.id?.toIdentifier()) },
                 ).map { item ->
                     val event = item.event.toPrimitives()
-                    banners.firstOrNull { it.event == event }
+                    banners.firstOrNull { it.event == event && it.asset?.id?.toIdentifier() == item.assetId }
                         ?: Banner(walletId = sceneWallet?.id, asset = assetInfo?.asset, state = item.state.toPrimitives(), event = event)
                 }
             }
@@ -67,7 +66,7 @@ class GetActiveBannersImpl(
 
     private fun bannerContext(wallet: Wallet?, assetInfo: AssetInfo?, isWalletEmpty: Boolean) = GemBannerContext(
         wallet = wallet?.toGem(),
-        hasAsset = assetInfo != null,
+        assetId = assetInfo?.asset?.id?.toIdentifier(),
         isStakeable = assetInfo?.metadata?.isStakeEnabled == true,
         hasStakeBalance = hasStakeBalance(assetInfo),
         hasAvailableBalance = (assetInfo?.balance?.balance?.available?.toBigIntegerOrNull() ?: BigInteger.ZERO) > BigInteger.ZERO,

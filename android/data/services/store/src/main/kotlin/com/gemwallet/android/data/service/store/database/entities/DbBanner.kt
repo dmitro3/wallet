@@ -1,12 +1,11 @@
 package com.gemwallet.android.data.service.store.database.entities
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.gemwallet.android.ext.toIdentifier
-import com.wallet.core.primitives.Asset
+import androidx.room.Relation
 import com.wallet.core.primitives.Banner
 import com.wallet.core.primitives.BannerEvent
 import com.wallet.core.primitives.BannerState
@@ -24,11 +23,17 @@ data class DbBanner(
     val event: BannerEvent,
 )
 
-fun DbBanner.toDTO(asset: Asset?): Banner {
+data class DbBannerWithAsset(
+    @Embedded val banner: DbBanner,
+    @Relation(parentColumn = "asset_id", entityColumn = "id")
+    val asset: DbAsset?,
+)
+
+fun DbBannerWithAsset.toDTO(): Banner {
     return Banner(
-        walletId = walletId?.let { WalletId(it) },
-        asset = asset?.takeIf { it.id.toIdentifier() == assetId },
-        state = state,
-        event = event,
+        walletId = banner.walletId?.let { WalletId(it) },
+        asset = asset?.toDTO(),
+        state = banner.state,
+        event = banner.event,
     )
 }

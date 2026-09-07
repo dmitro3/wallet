@@ -3,8 +3,8 @@
 import BigInt
 import Components
 import struct Gemstone.GemAssetBalance
-import struct Gemstone.GemAssetDetailsState
 import protocol Gemstone.GemAssetDetailsServiceProtocol
+import struct Gemstone.GemAssetDetailsState
 import enum Gemstone.GemAssetNetworkDestination
 import enum Gemstone.GemBalanceRow
 import struct Gemstone.GemBannerContent
@@ -208,7 +208,7 @@ public final class AssetSceneViewModel: Sendable {
     private var bannerContext: GemBannerContext {
         GemBannerContext(
             wallet: wallet.map(),
-            hasAsset: true,
+            assetId: asset.id.identifier,
             isStakeable: assetData.metadata.isStakeEnabled,
             hasStakeBalance: stakedValue > .zero,
             hasAvailableBalance: assetData.balance.available > 0,

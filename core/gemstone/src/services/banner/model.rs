@@ -5,7 +5,7 @@ use primitives::{AssetId, BannerEvent, BannerState, Chain, Wallet, WalletId};
 #[derive(Debug, Clone, uniffi::Record)]
 pub struct GemBannerContext {
     pub wallet: Option<Wallet>,
-    pub has_asset: bool,
+    pub asset_id: Option<AssetId>,
     pub is_stakeable: bool,
     pub has_stake_balance: bool,
     pub has_available_balance: bool,
@@ -25,6 +25,31 @@ impl GemBannerContext {
 pub struct GemBannerItem {
     pub event: BannerEvent,
     pub state: BannerState,
+    pub asset_id: Option<AssetId>,
+}
+
+enum BannerScope {
+    Asset,
+    Chain,
+    Wallet,
+}
+
+impl GemBannerItem {
+    fn scope(&self) -> BannerScope {
+        match self.event {
+            BannerEvent::AccountBlockedMultiSignature => BannerScope::Chain,
+            BannerEvent::Onboarding => BannerScope::Wallet,
+            BannerEvent::Stake | BannerEvent::AccountActivation | BannerEvent::ActivateAsset | BannerEvent::SuspiciousAsset | BannerEvent::TradePerpetuals => BannerScope::Asset,
+        }
+    }
+
+    pub(super) fn applies_to_asset(&self, asset_id: &AssetId) -> bool {
+        match self.scope() {
+            BannerScope::Asset => self.asset_id.as_ref() == Some(asset_id),
+            BannerScope::Chain => self.asset_id.as_ref().is_some_and(|id| id.chain == asset_id.chain),
+            BannerScope::Wallet => false,
+        }
+    }
 }
 
 #[derive(Debug, Clone, uniffi::Record)]

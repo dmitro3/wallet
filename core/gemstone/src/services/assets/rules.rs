@@ -242,7 +242,7 @@ pub fn details_state(
         .into_iter()
         .flatten()
         .collect(),
-        shows_banners: !is_view_only,
+        shows_banners: !banner_events.is_empty(),
         shows_manage: !metadata.is_balance_enabled,
         shows_resources: StakeChain::from_str(chain.as_ref()).is_ok_and(|stake_chain| stake_chain.get_uses_freeze()),
         shows_price_alerts: price_alerts_count > 0 && has_price,
@@ -547,6 +547,17 @@ mod tests {
         assert!(!state.shows_banners);
         assert!(!state.shows_earn);
         assert_eq!(state.empty_transactions_action, Some(GemAssetEmptyAction::Buy));
+    }
+
+    #[test]
+    fn test_details_state_shows_banners_for_every_wallet_type() {
+        for wallet_type in [WalletType::Multicoin, WalletType::Single, WalletType::PrivateKey, WalletType::View] {
+            for event in [BannerEvent::AccountBlockedMultiSignature, BannerEvent::SuspiciousAsset] {
+                let state = state(wallet_type.clone(), Chain::Tron, &metadata(true, true, true, true), &[event]);
+                assert!(state.shows_banners, "{wallet_type:?} {event:?}");
+            }
+            assert!(!state(wallet_type, Chain::Tron, &metadata(true, true, true, true), &[]).shows_banners);
+        }
     }
 
     #[test]

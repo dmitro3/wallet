@@ -1,5 +1,5 @@
 use crate::models::custom_types::GemBigInt;
-use primitives::{Asset, AssetId, BannerEvent, BannerState, Chain, ChainAsset, VerificationStatus, Wallet, WalletSource};
+use primitives::{Asset, AssetId, BannerEvent, BannerState, Chain, ChainAsset, VerificationStatus, Wallet, WalletSource, WalletType};
 
 use super::model::{GemBannerAmount, GemBannerContent, GemBannerContext, GemBannerDescription, GemBannerIcon, GemBannerItem, GemBannerKey, GemBannerLink, GemBannerTitle};
 use crate::config::chain::account_activation_fee_url;
@@ -56,14 +56,16 @@ pub fn wallet_setup_keys(wallet: &Wallet) -> Vec<GemBannerKey> {
 }
 
 fn is_visible_event(event: BannerEvent, context: &GemBannerContext) -> bool {
+    let has_asset = context.asset_id.is_some();
+    let can_sign = context.wallet.as_ref().is_some_and(|wallet| wallet.wallet_type != WalletType::View);
     match event {
         BannerEvent::AccountBlockedMultiSignature => true,
-        BannerEvent::AccountActivation => !context.has_asset || !context.has_available_balance,
-        BannerEvent::Stake => context.has_asset && !context.has_stake_balance,
-        BannerEvent::ActivateAsset => context.has_asset && !context.is_asset_activated,
-        BannerEvent::SuspiciousAsset => context.has_asset && is_suspicious(context),
-        BannerEvent::TradePerpetuals => context.has_asset && context.wallet.as_ref().is_some_and(crate::services::perpetual::rules::supports_perpetuals),
-        BannerEvent::Onboarding => !context.has_asset && context.is_wallet_empty,
+        BannerEvent::AccountActivation => can_sign && (!has_asset || !context.has_available_balance),
+        BannerEvent::Stake => can_sign && has_asset && !context.has_stake_balance,
+        BannerEvent::ActivateAsset => can_sign && has_asset && !context.is_asset_activated,
+        BannerEvent::SuspiciousAsset => has_asset && is_suspicious(context),
+        BannerEvent::TradePerpetuals => has_asset && context.wallet.as_ref().is_some_and(crate::services::perpetual::rules::supports_perpetuals),
+        BannerEvent::Onboarding => !has_asset && context.is_wallet_empty,
     }
 }
 
@@ -148,7 +150,10 @@ fn network_name(chain: Chain) -> String {
 
 pub(super) fn visible_banners(stored: Vec<GemBannerItem>, context: &GemBannerContext) -> Vec<GemBannerItem> {
     let mut banners: Vec<GemBannerItem> = Vec::new();
-    for item in stored.into_iter().chain(extra_banners()) {
+    for item in stored.into_iter().chain(extra_banners(context.asset_id.clone())) {
+        if context.asset_id.as_ref().is_some_and(|asset_id| !item.applies_to_asset(asset_id)) {
+            continue;
+        }
         if banners.iter().any(|existing| existing.event == item.event) {
             continue;
         }
@@ -160,12 +165,13 @@ pub(super) fn visible_banners(stored: Vec<GemBannerItem>, context: &GemBannerCon
     banners
 }
 
-fn extra_banners() -> Vec<GemBannerItem> {
+fn extra_banners(asset_id: Option<AssetId>) -> Vec<GemBannerItem> {
     [BannerEvent::ActivateAsset, BannerEvent::SuspiciousAsset]
         .into_iter()
         .map(|event| GemBannerItem {
             event,
             state: default_state(event),
+            asset_id: asset_id.clone(),
         })
         .collect()
 }
@@ -199,7 +205,7 @@ fn event_priority(event: BannerEvent) -> u8 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use primitives::{Account, WalletId, WalletType};
+    use primitives::{Account, WalletId, known_assets::TRON_USDT};
 
     #[test]
     fn test_setup_keys() {
@@ -246,7 +252,7 @@ mod tests {
     fn context(has_asset: bool) -> GemBannerContext {
         GemBannerContext {
             wallet: Some(Wallet::mock_with_accounts(Account::mock_chains(&[Chain::Ethereum, Chain::HyperCore], "address"))),
-            has_asset,
+            asset_id: has_asset.then(|| AssetId::from_chain(Chain::Ethereum)),
             is_stakeable: true,
             has_stake_balance: false,
             has_available_balance: false,
@@ -257,7 +263,11 @@ mod tests {
     }
 
     fn item(event: BannerEvent, state: BannerState) -> GemBannerItem {
-        GemBannerItem { event, state }
+        GemBannerItem {
+            event,
+            state,
+            asset_id: Some(AssetId::from_chain(Chain::Ethereum)),
+        }
     }
 
     fn events(banners: &[GemBannerItem]) -> Vec<BannerEvent> {
@@ -304,6 +314,93 @@ mod tests {
         assert!(visible_banners(perpetuals.clone(), &unsupported).is_empty());
         let no_wallet = GemBannerContext { wallet: None, ..context(true) };
         assert!(visible_banners(perpetuals, &no_wallet).is_empty());
+    }
+
+    #[test]
+    fn test_visible_banners_keep_warnings_without_signing_actions_for_view_wallets() {
+        let context = GemBannerContext {
+            wallet: Some(Wallet {
+                wallet_type: WalletType::View,
+                ..Wallet::mock()
+            }),
+            is_asset_activated: false,
+            asset_rank_score: Some(5),
+            ..context(true)
+        };
+        let stored = vec![
+            item(BannerEvent::Stake, BannerState::Active),
+            item(BannerEvent::AccountActivation, BannerState::Active),
+            item(BannerEvent::AccountBlockedMultiSignature, BannerState::AlwaysActive),
+        ];
+
+        assert_eq!(
+            events(&visible_banners(stored, &context)),
+            vec![BannerEvent::AccountBlockedMultiSignature, BannerEvent::SuspiciousAsset]
+        );
+        assert_eq!(events(&visible_banners(vec![], &context)), vec![BannerEvent::SuspiciousAsset]);
+    }
+
+    #[test]
+    fn test_multi_signature_warning_for_every_wallet_type_and_scene() {
+        let tron = AssetId::from_chain(Chain::Tron);
+        let token = TRON_USDT.id.clone();
+        let warning = GemBannerItem {
+            asset_id: Some(tron.clone()),
+            ..item(BannerEvent::AccountBlockedMultiSignature, BannerState::AlwaysActive)
+        };
+        for wallet_type in [WalletType::Multicoin, WalletType::Single, WalletType::PrivateKey, WalletType::View] {
+            for asset_id in [None, Some(tron.clone()), Some(token.clone())] {
+                let context = GemBannerContext {
+                    wallet: Some(Wallet {
+                        wallet_type: wallet_type.clone(),
+                        ..Wallet::mock()
+                    }),
+                    asset_id,
+                    ..context(true)
+                };
+                assert_eq!(visible_banners(vec![warning.clone()], &context), vec![warning.clone()], "{wallet_type:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn test_asset_scope_is_filtered_before_deduplication() {
+        let token = Asset::mock_ethereum_usdc().id;
+        let context = GemBannerContext {
+            asset_id: Some(token.clone()),
+            ..context(true)
+        };
+        let warning = item(BannerEvent::AccountBlockedMultiSignature, BannerState::AlwaysActive);
+        let token_stake = GemBannerItem {
+            asset_id: Some(token),
+            ..item(BannerEvent::Stake, BannerState::Active)
+        };
+        let stored = vec![
+            GemBannerItem {
+                asset_id: Some(AssetId::from_chain(Chain::Tron)),
+                ..warning.clone()
+            },
+            item(BannerEvent::Stake, BannerState::Active),
+            item(BannerEvent::AccountActivation, BannerState::Active),
+            item(BannerEvent::TradePerpetuals, BannerState::Active),
+            item(BannerEvent::Onboarding, BannerState::Active),
+            warning.clone(),
+            token_stake.clone(),
+            token_stake.clone(),
+        ];
+        assert_eq!(visible_banners(stored, &context), vec![warning, token_stake]);
+    }
+
+    #[test]
+    fn test_asset_scope_excludes_warnings_without_an_asset_or_with_cancelled_state() {
+        let stored = vec![
+            GemBannerItem {
+                asset_id: None,
+                ..item(BannerEvent::AccountBlockedMultiSignature, BannerState::AlwaysActive)
+            },
+            item(BannerEvent::AccountBlockedMultiSignature, BannerState::Cancelled),
+        ];
+        assert!(visible_banners(stored, &context(true)).is_empty());
     }
 
     #[test]
