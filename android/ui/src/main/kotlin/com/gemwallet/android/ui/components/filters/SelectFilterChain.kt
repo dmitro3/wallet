@@ -23,16 +23,16 @@ fun LazyListScope.selectFilterChain(
     chainService: GemChainService,
     onFilter: (Chain) -> Unit,
 ) {
-    if (availableChains.size < 2) {
-        return
-    }
-    item {
-        SubheaderItem(R.string.settings_networks_title)
-    }
     val chains = chainService.getMatchingChains(availableChains.map { it.string }, query).map { it.requireChain() }
     val items = availableChains.map { it.asset() }.filter { asset ->
         chains.contains(asset.id.chain) ||
             asset.id.chain.assetType()?.string?.contains(query, ignoreCase = true) == true
+    }
+    if (items.isEmpty()) {
+        return
+    }
+    item {
+        SubheaderItem(R.string.settings_networks_title)
     }
     val size = items.size
     items.forEachIndexed { index, item ->
