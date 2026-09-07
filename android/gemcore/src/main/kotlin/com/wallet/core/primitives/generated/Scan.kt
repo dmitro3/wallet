@@ -8,26 +8,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
 
 @Serializable
-data class ScanAddressTarget (
-	val assetId: AssetId,
-	val address: String
-)
-
-@Serializable
-data class ScanTransaction (
-	val isMalicious: Boolean? = null,
-	val isMemoRequired: Boolean? = null
-)
-
-@Serializable
-data class ScanTransactionPayload (
-	val origin: ScanAddressTarget,
-	val target: ScanAddressTarget,
-	val website: String? = null,
-	val type: TransactionType
-)
-
-@Serializable
 enum class AddressType(val string: String) {
 	@SerialName("address")
 	Address("address"),

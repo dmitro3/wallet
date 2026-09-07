@@ -43,9 +43,6 @@ extension Primitives.RedemptionRequest: JsonCodable {}
 extension Primitives.RedemptionResult: JsonCodable {}
 extension Primitives.ReferralCode: JsonCodable {}
 extension Primitives.Rewards: JsonCodable {}
-extension Primitives.ScanAddressTarget: JsonCodable {}
-extension Primitives.ScanTransaction: JsonCodable {}
-extension Primitives.ScanTransactionPayload: JsonCodable {}
 extension Primitives.SearchResponse: JsonCodable {}
 extension Primitives.StreamEvent: JsonCodable {}
 extension Primitives.StreamMessage: JsonCodable {}
