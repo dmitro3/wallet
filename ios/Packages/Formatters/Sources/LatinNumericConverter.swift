@@ -17,7 +17,9 @@ enum LatinNumericConverter {
     }()
 
     static func toLatinDigits(_ raw: String) -> String {
-        guard raw.rangeOfCharacter(from: nonLatinDigits) != nil else { return raw }
+        let needsConversion = raw.rangeOfCharacter(from: nonLatinDigits) != nil
+            || raw.unicodeScalars.contains { !$0.isASCII && $0.properties.numericType == .decimal }
+        guard needsConversion else { return raw }
 
         var output = String.UnicodeScalarView()
         output.reserveCapacity(raw.unicodeScalars.count)

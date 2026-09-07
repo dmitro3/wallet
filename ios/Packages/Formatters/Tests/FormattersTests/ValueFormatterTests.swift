@@ -94,6 +94,23 @@ final class ValueFormatterTests {
         // #expect(try formatter.inputNumber(from: "100,18054055999998", decimals: 8) == 10018054055)
     }
 
+    @Test(arguments: [
+        ("१२३.४५", "en_US"),
+        ("১২৩.৪৫", "en_US"),
+        ("๑๒๓.๔๕", "en_US"),
+        ("１２３.４５", "en_US"),
+        ("𝟙𝟚𝟛.𝟜𝟝", "en_US"),
+        ("1२৩.4５", "en_US"),
+        ("१२३.४५ BTC", "en_US"),
+        ("००१२३.४५", "en_US"),
+        ("१२३,४५", "fr_FR"),
+    ])
+    func fromUnicodeInput(input: String, localeIdentifier: String) throws {
+        let formatter = ValueFormatter(locale: Locale(identifier: localeIdentifier), style: .full)
+
+        #expect(try formatter.inputNumber(from: input, decimals: 2) == 12345)
+    }
+
     @Test
     func fromInputRU_UA() throws {
         let formatter = ValueFormatter(locale: .UA, style: .full)

@@ -42,6 +42,19 @@ struct LatinNumericConverterTests {
         #expect(LatinNumericConverter.toLatinDigits("123٫45") == "123.45")
     }
 
+    @Test(arguments: [
+        ("१२३", "123"),
+        ("৪৫৬", "456"),
+        ("๗๘๙", "789"),
+        ("１２３", "123"),
+        ("𝟙𝟚𝟛", "123"),
+        ("1२৩", "123"),
+        ("१२३BTC", "123BTC"),
+    ])
+    func unicodeDecimalDigits(input: String, expected: String) {
+        #expect(LatinNumericConverter.toLatinDigits(input) == expected)
+    }
+
     @Test
     func emptyString() {
         #expect(LatinNumericConverter.toLatinDigits("") == "")
