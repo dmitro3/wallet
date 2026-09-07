@@ -24,6 +24,9 @@ import Store
 import Testing
 @testable import Transfer
 import TransferTestKit
+import struct Gemstone.SimulationPayloadField
+import struct Gemstone.SimulationWarning
+import struct Gemstone.SimulationWarningApproval
 
 @MainActor
 struct ConfirmTransferSceneViewModelTests {
@@ -445,16 +448,16 @@ struct ConfirmTransferSceneViewModelTests {
             simulation: .mock(
                 warnings: [SimulationWarning(
                     severity: .warning,
-                    warning: .tokenApproval(SimulationWarningApproval(assetId: AssetId(chain: .ethereum, tokenId: "0x1111111111111111111111111111111111111111"), value: "1000")),
+                    warning: .tokenApproval(SimulationWarningApproval(assetId: AssetId(chain: .ethereum, tokenId: "0x1111111111111111111111111111111111111111").identifier, value: 1000)),
                     message: nil,
                 )],
                 payload: payload,
             ),
             load: .success(.mock(
-                simulation: GemConfirmSimulation(primaryFields: payload.map { $0.map() }, secondaryFields: [], header: nil, balanceChanges: [], hasCriticalWarning: false),
+                simulation: GemConfirmSimulation(primaryFields: payload, secondaryFields: [], header: nil, balanceChanges: [], hasCriticalWarning: false),
                 warnings: [SimulationWarning(
                     severity: .warning,
-                    warning: .tokenApproval(SimulationWarningApproval(assetId: AssetId(chain: .ethereum, tokenId: "0x1111111111111111111111111111111111111111"), value: "1000")),
+                    warning: .tokenApproval(SimulationWarningApproval(assetId: AssetId(chain: .ethereum, tokenId: "0x1111111111111111111111111111111111111111").identifier, value: 1000)),
                     message: nil,
                 )],
             )),
@@ -499,7 +502,7 @@ struct ConfirmTransferSceneViewModelTests {
             simulation: .mock(warnings: [
                 SimulationWarning(
                     severity: .warning,
-                    warning: .permitApproval(SimulationWarningApproval(assetId: AssetId(chain: .ethereum, tokenId: "0x123"), value: "1000")),
+                    warning: .permitApproval(SimulationWarningApproval(assetId: AssetId(chain: .ethereum, tokenId: "0x123").identifier, value: 1000)),
                     message: nil,
                 ),
                 SimulationWarning(
@@ -521,7 +524,7 @@ struct ConfirmTransferSceneViewModelTests {
             simulation: .mock(warnings: [
                 SimulationWarning(
                     severity: .warning,
-                    warning: .permitApproval(SimulationWarningApproval(assetId: AssetId(chain: .ethereum, tokenId: "0x123"), value: "1000")),
+                    warning: .permitApproval(SimulationWarningApproval(assetId: AssetId(chain: .ethereum, tokenId: "0x123").identifier, value: 1000)),
                     message: nil,
                 ),
                 SimulationWarning(

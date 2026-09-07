@@ -1,6 +1,8 @@
 // Copyright (c). Gem Wallet. All rights reserved.
 
 import struct Gemstone.ApprovalData
+public import struct Gemstone.SimulationResult
+public import struct Gemstone.SimulationWarning
 import struct Gemstone.GemConfirmInput
 public import BigInt
 public import enum Gemstone.FeePriority
@@ -35,7 +37,7 @@ public extension GemConfirmData {
         selectedPriority: Gemstone.FeePriority = .normal,
         feeRates: [GemFeeRate] = [],
         metadata: GemTransactionLoadMetadata = .none,
-        simulation: String? = .none,
+        simulation: SimulationResult? = .none,
     ) -> GemConfirmData {
         GemConfirmData(
             input: input,
@@ -145,7 +147,7 @@ public extension GemConfirmLoad {
         metadata: GemConfirmMetadata = .mock(),
         feeAssets: [GemFeeAsset] = [],
         simulation: GemConfirmSimulation? = nil,
-        warnings: [Primitives.SimulationWarning] = [],
+        warnings: [SimulationWarning] = [],
         addressName: Primitives.AddressName? = nil,
         preload: GemConfirmPreload? = .mock(),
     ) -> GemConfirmLoad {
@@ -154,7 +156,7 @@ public extension GemConfirmLoad {
             feeAsset: feeAsset.map(),
             metadata: metadata,
             feeAssets: feeAssets,
-            simulation: GemConfirmSimulationState(chain: Primitives.Chain.ethereum.rawValue, result: nil, warnings: warnings.map { $0.json() }, simulation: simulation, addressNames: []),
+            simulation: GemConfirmSimulationState(chain: Primitives.Chain.ethereum.rawValue, result: nil, warnings: warnings, simulation: simulation, addressNames: []),
             addressName: addressName?.map(),
             preload: preload,
         )

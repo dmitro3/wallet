@@ -93,6 +93,7 @@ import class Gemstone.GemBannerService
 import class Gemstone.GemTransactionsService
 import enum Gemstone.GemRecipientType
 import struct Gemstone.GemTransferData
+import struct Gemstone.SimulationResult
 
 public struct ViewModelFactory: Sendable {
     let apiClient: GemApiClient
@@ -527,7 +528,7 @@ public struct ViewModelFactory: Sendable {
             ),
             wallet: wallet,
             service: service,
-            session: service.session(wallet: wallet.map(), transfer: data, simulation: simulation?.json()),
+            session: service.session(wallet: wallet.map(), transfer: data, simulation: simulation),
             onComplete: { [toastPresenter] in
                 Task { toastPresenter.present(.transfer(for: data.inputType)) }
                 onComplete?()

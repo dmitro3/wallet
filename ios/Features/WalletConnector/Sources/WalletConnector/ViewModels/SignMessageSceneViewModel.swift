@@ -10,6 +10,8 @@ import Primitives
 import PrimitivesComponents
 import Style
 import WalletConnectorService
+import struct Gemstone.SimulationPayloadField
+import struct Gemstone.SimulationWarning
 
 @Observable
 @MainActor
@@ -31,7 +33,7 @@ public final class SignMessageSceneViewModel {
         self.service = service
         self.payload = payload
         self.confirmTransferDelegate = confirmTransferDelegate
-        preview = service.preview(message: payload.message, simulation: payload.simulation.json())
+        preview = service.preview(message: payload.message, simulation: payload.simulation)
     }
 
     public var networkText: String {
@@ -97,8 +99,8 @@ public final class SignMessageSceneViewModel {
     public var payloadModel: SimulationPayloadModel {
         SimulationPayloadModel(
             chain: payload.chain,
-            primaryFields: preview.primaryFields.map { $0.map() },
-            secondaryFields: preview.secondaryFields.map { $0.map() },
+            primaryFields: preview.primaryFields,
+            secondaryFields: preview.secondaryFields,
             addressNames: payloadAddressNames,
         )
     }

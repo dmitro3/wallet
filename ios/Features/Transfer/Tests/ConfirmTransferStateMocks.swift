@@ -5,6 +5,8 @@ import struct Gemstone.GemConfirmPreload
 import Components
 import Primitives
 import PrimitivesComponents
+import struct Gemstone.SimulationResult
+import struct Gemstone.SimulationWarning
 @testable import Transfer
 
 extension ConfirmSimulationState {

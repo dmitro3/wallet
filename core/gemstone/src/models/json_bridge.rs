@@ -4,8 +4,8 @@ use primitives::portfolio::{PerpetualAccountSummary, PerpetualPortfolio, Perpetu
 use primitives::rewards::{RedemptionRequest, RedemptionResult};
 use primitives::{AssetBasic, AssetFull, AssetMarket, ConfigResponse, ConfigVersions, FiatAssets, Markets, SearchResponse, StreamEvent, StreamMessage, SupportTyping};
 use primitives::{
-    AssetList, ChainAsset, Payment, PaymentAmount, PaymentLink, PaymentRequest, ScanAddressTarget, ScanTransaction, ScanTransactionPayload, SimulationHeader, SimulationResult,
-    SimulationWarning, SolanaNftStandard, StakeValidator, TransactionPerpetualMetadata, TronStakeData, TronUnfreeze, TronVote, UTXO,
+    AssetList, ChainAsset, Payment, PaymentAmount, PaymentLink, PaymentRequest, ScanAddressTarget, ScanTransaction, ScanTransactionPayload, SolanaNftStandard,
+    StakeValidator, TransactionPerpetualMetadata, TronStakeData, TronUnfreeze, TronVote, UTXO,
 };
 use primitives::{
     AuthNonce, AuthPayload, ChartValuePercentage, FiatQuote, FiatQuoteRequest, FiatQuoteUrl, FiatQuotes, FiatTransactionData, InAppNotification, PortfolioAsset, PortfolioAssets,
@@ -81,9 +81,6 @@ json_bridge!(
     SearchResponse,
     StreamEvent,
     StreamMessage,
-    SimulationHeader,
-    SimulationResult,
-    SimulationWarning,
     SolanaNftStandard,
     StakeValidator,
     SupportMessage,

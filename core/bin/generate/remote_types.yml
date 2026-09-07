@@ -64,6 +64,13 @@ remote:
   - Release
   - Resource
   - SimulationPayloadFieldType
+  - SimulationSeverity
+  - SimulationWarningApproval
+  - SimulationWarningType
+  - SimulationWarning
+  - SimulationBalanceChange
+  - SimulationHeader
+  - SimulationResult
   - SolanaTokenProgramId
   - StakeProviderType
   - SwapPriceImpact

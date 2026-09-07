@@ -28,6 +28,9 @@ import Swap
 import SwiftUI
 import Validators
 import WalletConnector
+import struct Gemstone.SimulationPayloadField
+import struct Gemstone.SimulationResult
+import struct Gemstone.SimulationWarning
 
 @Observable
 @MainActor
@@ -406,14 +409,14 @@ extension ConfirmTransferSceneViewModel {
         )
     }
 
-    func submit(request: ConfirmTransferRequest, confirmData: GemConfirmData, amount: GemTransferAmount, simulation: Primitives.SimulationResult?) async throws {
+    func submit(request: ConfirmTransferRequest, confirmData: GemConfirmData, amount: GemTransferAmount, simulation: SimulationResult?) async throws {
         let result: GemExecuteResult
         do {
             result = try await service.execute(
                 confirm: confirmData,
                 value: amount.value,
                 networkFee: amount.networkFee,
-                simulation: simulation?.json(),
+                simulation: simulation,
             )
         } catch let GemConfirmError.Broadcast(hashes, msg) {
             hashes.forEach { request.delegate?(.success($0)) }

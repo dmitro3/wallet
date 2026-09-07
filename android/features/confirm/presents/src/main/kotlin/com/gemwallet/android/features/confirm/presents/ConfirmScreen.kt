@@ -94,7 +94,7 @@ import com.gemwallet.android.ui.models.actions.FinishConfirmAction
 import com.gemwallet.android.ui.requestAuth
 import com.gemwallet.android.ui.theme.paddingDefault
 import com.gemwallet.android.features.confirm.presents.components.confirmBalanceChangesContent
-import com.wallet.core.primitives.SimulationResult
+import uniffi.gemstone.SimulationResult
 import com.wallet.core.primitives.TransactionType
 
 @OptIn(ExperimentalMaterial3Api::class)

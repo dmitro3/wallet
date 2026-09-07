@@ -12,8 +12,8 @@ import uniffi.gemstone.GemSignMessageServiceInterface
 import com.wallet.core.primitives.Account
 import com.wallet.core.primitives.ApplicationMetadata
 import com.wallet.core.primitives.Chain
-import com.wallet.core.primitives.SimulationResult
-import com.wallet.core.primitives.SimulationWarning
+import uniffi.gemstone.SimulationResult
+import uniffi.gemstone.SimulationWarning
 import com.wallet.core.primitives.Wallet
 import com.wallet.core.primitives.TransferDataOutputAction
 import uniffi.gemstone.GemTransferData
@@ -44,7 +44,7 @@ sealed class WCRequest(
     ) : WCRequest(request), WalletConnectReviewModel {
         val signMessage: GemSignMessage get() = request.message
 
-        private val preview: GemSignMessagePreview by lazy { service.preview(request.message, simulation.toJson()) }
+        private val preview: GemSignMessagePreview by lazy { service.preview(request.message, simulation) }
 
         override val message: String
             get() = preview.text
@@ -67,7 +67,7 @@ sealed class WCRequest(
         fun withAddressNames(addressNames: Map<String, String>): SignMessage = SignMessage(request, service, addressNames)
 
         private fun List<uniffi.gemstone.SimulationPayloadField>.fields(): List<PayloadField> =
-            map { it.toPrimitives() }.withExplorerLinks(chain) { chain, address -> service.addressUrl(chain.string, address) }
+            withExplorerLinks(chain) { chain, address -> service.addressUrl(chain.string, address) }
     }
 
     class Transaction(

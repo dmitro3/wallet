@@ -5,6 +5,7 @@ import struct Gemstone.GemWalletConnectMessageRequest
 import struct Gemstone.SignMessage
 import GemstonePrimitives
 import Primitives
+import struct Gemstone.SimulationResult
 
 public struct SignMessagePayload: Sendable {
     public let chain: Chain
@@ -33,7 +34,7 @@ public struct SignMessagePayload: Sendable {
             session: request.session.map(),
             wallet: request.wallet.map(),
             message: request.message,
-            simulation: SimulationResult(request.simulation),
+            simulation: request.simulation,
         )
     }
 }

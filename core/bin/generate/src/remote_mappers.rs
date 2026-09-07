@@ -385,7 +385,7 @@ fn variants(name: &str, body: &[&str]) -> Vec<Variant> {
             let types = rest.rsplit_once(')').map(|(types, _)| types).unwrap_or_default();
             variants.push(Variant {
                 name: variant.trim().to_string(),
-                fields: types.split(',').map(str::trim).filter(|type_name| !type_name.is_empty()).map(tuple_field).collect(),
+                fields: tuple_types(types).into_iter().map(|type_name| tuple_field(&type_name)).collect(),
             });
             continue;
         }
@@ -410,6 +410,45 @@ fn variants(name: &str, body: &[&str]) -> Vec<Variant> {
         });
     }
     variants
+}
+
+/// Splits a tuple variant's types on the commas between them, keeping the ones inside a field
+/// attribute or a generic argument, then drops the attributes: `#[serde(a = "b", c = "d")] Option<BigInt>`.
+fn tuple_types(types: &str) -> Vec<String> {
+    let mut fields = Vec::new();
+    let mut depth = 0usize;
+    let mut current = String::new();
+    for character in types.chars() {
+        match character {
+            '<' | '(' | '[' => depth += 1,
+            '>' | ')' | ']' => depth = depth.saturating_sub(1),
+            ',' if depth == 0 => {
+                fields.push(std::mem::take(&mut current));
+                continue;
+            }
+            _ => {}
+        }
+        current.push(character);
+    }
+    fields.push(current);
+    fields.iter().filter_map(|field| strip_attributes(field)).collect()
+}
+
+fn strip_attributes(field: &str) -> Option<String> {
+    let mut rest = field.trim();
+    while let Some(attribute) = rest.strip_prefix("#[") {
+        let mut depth = 1usize;
+        let end = attribute.char_indices().find(|(_, character)| {
+            match character {
+                '[' => depth += 1,
+                ']' => depth -= 1,
+                _ => {}
+            }
+            depth == 0
+        })?;
+        rest = attribute[end.0 + 1..].trim();
+    }
+    (!rest.is_empty()).then(|| rest.to_string())
 }
 
 fn tuple_field(type_name: &str) -> Field {

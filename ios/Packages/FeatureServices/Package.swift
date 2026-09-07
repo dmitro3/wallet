@@ -124,6 +124,7 @@ let package = Package(
             dependencies: [
                 "WalletConnectorService",
                 .product(name: "PrimitivesTestKit", package: "Primitives"),
+                .product(name: "GemstonePrimitivesTestKit", package: "GemstonePrimitives"),
             ],
             path: "WalletConnectorService/TestKit",
         ),

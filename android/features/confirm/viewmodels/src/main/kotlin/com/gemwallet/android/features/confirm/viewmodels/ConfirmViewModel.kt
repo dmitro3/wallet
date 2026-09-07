@@ -77,7 +77,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.wallet.core.primitives.SimulationResult
+import uniffi.gemstone.SimulationResult
 import java.math.BigInteger
 import javax.inject.Inject
 import com.gemwallet.android.domains.confirm.unpackTransferData
@@ -97,7 +97,7 @@ class ConfirmViewModel @Inject constructor(
     val isNetworkFeeSheetVisible = MutableStateFlow(false)
     val feeSelection = MutableStateFlow<FeeSelection>(FeeSelection.Preset(FeePriority.Normal))
     private val feeAssetSelection = MutableStateFlow<FeeAssetSelection>(FeeAssetSelection.Automatic)
-    private var requestSimulation: String? = null
+    private var requestSimulation: SimulationResult? = null
 
     private val request = savedStateHandle.getStateFlow<String?>(RouteArgument.Params.key, null)
         .filterNotNull()
@@ -253,7 +253,7 @@ class ConfirmViewModel @Inject constructor(
 
 
     fun init(transfer: GemTransferData, simulationResult: SimulationResult? = null) {
-        requestSimulation = simulationResult?.toJson()
+        requestSimulation = simulationResult
         feeSelection.value = FeeSelection.Preset(transfer.defaultFeePriority().toPrimitives())
         viewModelScope.launch(Dispatchers.IO) {
             val pack = transfer.pack()

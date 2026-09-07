@@ -14,6 +14,7 @@ import Store
 import StoreTestKit
 @testable import Transfer
 import TransferTestKit
+import struct Gemstone.SimulationResult
 
 @MainActor
 extension ConfirmTransferSceneViewModel {

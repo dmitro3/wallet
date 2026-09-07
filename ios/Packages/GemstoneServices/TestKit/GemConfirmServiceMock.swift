@@ -21,6 +21,7 @@ public import typealias Gemstone.WalletId
 import Foundation
 import GemstonePrimitives
 import Primitives
+public import struct Gemstone.SimulationResult
 
 public final class GemConfirmServiceMock: GemConfirmServiceProtocol, @unchecked Sendable {
     private let executeResult: Result<GemExecuteResult, any Error>

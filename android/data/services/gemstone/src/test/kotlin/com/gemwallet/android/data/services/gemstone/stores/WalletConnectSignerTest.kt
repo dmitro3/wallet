@@ -12,7 +12,7 @@ import com.gemwallet.android.testkit.mockWallet
 import com.wallet.core.primitives.ApplicationMetadata
 import com.wallet.core.primitives.ApplicationMetadataSource
 import com.wallet.core.primitives.Chain
-import com.wallet.core.primitives.SimulationResult
+import uniffi.gemstone.SimulationResult
 import com.wallet.core.primitives.WalletConnectionSession
 import com.wallet.core.primitives.WalletConnectionState
 import kotlinx.coroutines.async
@@ -48,7 +48,7 @@ class WalletConnectSignerTest {
         metadata = ApplicationMetadata(name = "dapp", description = "", url = "https://dapp", icon = "", source = ApplicationMetadataSource.WalletConnect),
     )
     private val pendingRequests = WalletConnectPendingRequests()
-    private val simulation = SimulationResult(warnings = emptyList(), balanceChanges = emptyList(), payload = emptyList()).toJson()
+    private val simulation = SimulationResult(warnings = emptyList(), balanceChanges = emptyList(), payload = emptyList(), header = null)
 
     private fun messageRequest(message: SignMessage) = GemWalletConnectMessageRequest(
         sessionId = "topic",

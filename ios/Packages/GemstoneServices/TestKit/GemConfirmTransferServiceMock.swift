@@ -26,6 +26,7 @@ import GemstonePrimitives
 import GemstonePrimitivesTestKit
 import Primitives
 import PrimitivesTestKit
+public import struct Gemstone.SimulationResult
 
 public final class GemConfirmTransferServiceMock: GemConfirmTransferServiceProtocol, @unchecked Sendable {
     private let confirm: GemConfirmServiceMock

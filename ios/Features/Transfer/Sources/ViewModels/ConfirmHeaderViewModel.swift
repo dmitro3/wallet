@@ -57,7 +57,7 @@ private extension ConfirmHeaderViewModel {
         if case .generic = request.data.inputType,
            let header = request.simulation?.header
         {
-            return .asset(image: AssetIdViewModel(assetId: header.assetId).assetImage)
+            return .asset(image: AssetIdViewModel(assetId: AssetId(core: header.assetId)).assetImage)
         }
 
         return TransactionInputViewModel(

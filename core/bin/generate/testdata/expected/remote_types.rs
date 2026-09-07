@@ -34,6 +34,7 @@ pub enum GasPriceType {
 pub enum StakeAction {
     Delegate(primitives::DelegationValidator),
     Claim(Vec<primitives::DelegationValidator>),
+    Reward(Option<GemBigInt>),
     Wait,
 }
 

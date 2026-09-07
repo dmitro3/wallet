@@ -17,5 +17,6 @@ pub struct Delegation {
 pub enum StakeAction {
     Delegate(DelegationValidator),
     Claim(Vec<DelegationValidator>),
+    Reward(#[serde(serialize_with = "serialize_option_bigint", deserialize_with = "deserialize_option_bigint_from_str")] Option<BigInt>),
     Wait,
 }

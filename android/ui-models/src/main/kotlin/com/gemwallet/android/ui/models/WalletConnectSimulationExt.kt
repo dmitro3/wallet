@@ -2,8 +2,8 @@ package com.gemwallet.android.ui.models
 
 import com.wallet.core.primitives.BlockExplorerLink
 import com.wallet.core.primitives.Chain
-import com.wallet.core.primitives.SimulationPayloadField
-import com.wallet.core.primitives.SimulationPayloadFieldType
+import uniffi.gemstone.SimulationPayloadField
+import uniffi.gemstone.SimulationPayloadFieldType
 import uniffi.gemstone.BlockExplorerLink as GemBlockExplorerLink
 import com.gemwallet.android.ext.toPrimitives
 
@@ -19,7 +19,7 @@ fun List<SimulationPayloadField>.withExplorerLinks(
 ): List<PayloadField> {
     if (chain == null) return map { PayloadField(field = it, chain = null) }
     return map { field ->
-        val link = if (field.fieldType == SimulationPayloadFieldType.Address) {
+        val link = if (field.fieldType == SimulationPayloadFieldType.ADDRESS) {
             addressUrl(chain, field.value).toPrimitives()
         } else null
         PayloadField(field = field, explorerLink = link, chain = chain)

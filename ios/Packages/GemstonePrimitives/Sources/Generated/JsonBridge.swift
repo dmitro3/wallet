@@ -49,9 +49,6 @@ extension Primitives.ScanTransactionPayload: JsonCodable {}
 extension Primitives.SearchResponse: JsonCodable {}
 extension Primitives.StreamEvent: JsonCodable {}
 extension Primitives.StreamMessage: JsonCodable {}
-extension Primitives.SimulationHeader: JsonCodable {}
-extension Primitives.SimulationResult: JsonCodable {}
-extension Primitives.SimulationWarning: JsonCodable {}
 extension Primitives.SolanaNftStandard: JsonCodable {}
 extension Primitives.StakeValidator: JsonCodable {}
 extension Primitives.SupportMessage: JsonCodable {}
